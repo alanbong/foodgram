@@ -1,5 +1,3 @@
-import os
-
 from django.contrib import admin
 from django.urls import path, include
 from django.views.static import serve
@@ -17,12 +15,6 @@ urlpatterns = [
         serve,
         {'path': 'redoc.html', 'document_root': DOCS_DIR},
         name='redoc'
-    ),
-    path(
-        'redoc/openapi-schema.yml',
-        serve,
-        {'path': 'openapi-schema.yml', 'document_root': DOCS_DIR},
-        name='openapi-schema'
     ),
 ]
 

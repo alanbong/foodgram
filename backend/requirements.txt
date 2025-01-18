@@ -1,5 +1,8 @@
 asgiref==3.8.1
-Django==3.2.16
+Django==4.2.18
+django-cors-headers==4.6.0
+djangorestframework==3.12.4
 pytz==2024.2
 sqlparse==0.5.3
 typing_extensions==4.12.2
+tzdata==2024.2

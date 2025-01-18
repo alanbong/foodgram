@@ -5,8 +5,9 @@ from django.urls import path, include
 from django.views.static import serve
 from django.conf import settings
 from django.conf.urls.static import static
+from foodgram_backend.settings import BASE_DIR
 
-DOCS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'docs')
+DOCS_DIR = BASE_DIR.parent / 'docs'
 
 urlpatterns = [
     path('admin/', admin.site.urls),

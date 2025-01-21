@@ -167,7 +167,7 @@ class Favorite(models.Model):
         verbose_name_plural = 'Избранные рецепты'
         constraints = [
             models.UniqueConstraint(
-                fields=('author', 'recipe'),
+                fields=('user', 'recipe'),
                 name='unique_favorite'
             )
         ]
@@ -179,7 +179,7 @@ class Favorite(models.Model):
 
 class ShoppingCart(models.Model):
     """Модель списка покупок."""
-    author = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         related_name='shopping_cart',
         on_delete=models.CASCADE,
@@ -196,49 +196,11 @@ class ShoppingCart(models.Model):
         verbose_name_plural = 'Список покупок'
         constraints = [
             models.UniqueConstraint(
-                fields=('author', 'recipe'),
-                name='unique_author_recipe_in_card'
+                fields=('user', 'recipe'),
+                name='unique_user_recipe_in_card'
             )
         ]
 
     def __str__(self):
         return f'{self.user[:MAX_LENGTH_50]} добавил \
             {self.recipe[:MAX_LENGTH_50]} в список покупок'
-
-
-class Subscription(models.Model):
-    """Модель подписок пользователей на авторов рецептов."""
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='follower',
-        verbose_name="Подписчик"
-    )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='followed',
-        verbose_name="Автор"
-    )
-
-    class Meta:
-        verbose_name = "Подписка"
-        verbose_name_plural = "Подписки"
-        constraints = [
-            models.UniqueConstraint(
-                fields=('user', 'author'),
-                name='unique_subscription'
-            ),
-
-            models.CheckConstraint(
-                check=models.Q(
-                    _negated=True,
-                    user=models.F('author')
-                ),
-                name='user_cant_follow_himself'
-            )
-        ]
-
-    def __str__(self):
-        return f"{self.user.username[:MAX_LENGTH_50]} \
-            подписан {self.author.username[:MAX_LENGTH_50]}"

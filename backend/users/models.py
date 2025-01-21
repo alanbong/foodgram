@@ -1,9 +1,8 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
 from django.db import models
+from django.contrib.auth import get_user_model
 
-from .constants import MAX_LENGTH_150, USER_ROLE, ADMIN_ROLE
+from .constants import MAX_LENGTH_150, MAX_LENGTH_50, USER_ROLE, ADMIN_ROLE
 from .validators import validate_username
 
 ROLE_CHOICES = [
@@ -58,4 +57,45 @@ class UserModel(AbstractUser):
         ordering = ['username']
 
     def __str__(self):
-        return self.username[:50]
+        return self.username[:MAX_LENGTH_50]
+
+
+User = get_user_model()
+
+
+class Subscription(models.Model):
+    """Модель подписок пользователей на авторов рецептов."""
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='follower',
+        verbose_name="Подписчик"
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='followed',
+        verbose_name="Автор"
+    )
+
+    class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+        constraints = [
+            models.UniqueConstraint(
+                fields=('user', 'author'),
+                name='unique_subscription'
+            ),
+
+            models.CheckConstraint(
+                check=models.Q(
+                    _negated=True,
+                    user=models.F('author')
+                ),
+                name='user_cant_follow_himself'
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user.username[:]} \
+            подписан {self.author.username[:MAX_LENGTH_50]}"

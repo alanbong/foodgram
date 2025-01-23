@@ -47,6 +47,9 @@ class UserModel(AbstractUser):
         verbose_name='Аватар профиля'
     )
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+
     @property
     def is_admin(self):
         return self.role == ADMIN_ROLE or self.is_superuser or self.is_staff

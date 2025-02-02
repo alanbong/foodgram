@@ -18,7 +18,7 @@ from .serializers import (
     CustomUserSerializer, SubscriptionSerializer,
     TagSerializer, IngredientSerializer
 )
-from .permissions import IsOwnerOrAdminOrReadOnly
+from .permissions import IsOwnerOrAdminOrReadOnly, IsSelfOrAdminOrReadOnly
 
 
 User = get_user_model()
@@ -35,14 +35,14 @@ class UsersViewSet(UserViewSet):
     """Кастомный ViewSet для пользователей."""
     serializer_class = CustomUserSerializer
     queryset = User.objects.all()
-    permission_classes = (AllowAny,)
+    permission_classes = (IsSelfOrAdminOrReadOnly,)
     pagination_class = CustomPagination
 
     @action(
         detail=False,
         methods=('put', 'delete'),
         url_path='me/avatar',
-        permission_classes=(IsAuthenticated,)
+        permission_classes=(IsSelfOrAdminOrReadOnly,)
     )
     def manage_avatar(self, request):
         user = request.user
@@ -102,7 +102,10 @@ class UsersViewSet(UserViewSet):
         if subscription:
             subscription.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response({'error': 'Вы не подписаны на этого пользователя.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'error': 'Вы не подписаны на этого пользователя.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     @action(
         detail=False,
@@ -117,7 +120,9 @@ class UsersViewSet(UserViewSet):
             user=user
         ).prefetch_related('author__recipes')
         page = self.paginate_queryset(subscriptions)
-        serializer = SubscriptionSerializer(page, many=True, context={'request': request})
+        serializer = SubscriptionSerializer(
+            page, many=True, context={'request': request}
+        )
         return self.get_paginated_response(serializer.data)
 
 
@@ -125,7 +130,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet для работы с тегами."""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = (IsOwnerOrAdminOrReadOnly,)
+    permission_classes = (AllowAny,)
     pagination_class = None
 
 
@@ -133,7 +138,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet для работы с ингредиентами."""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = (IsOwnerOrAdminOrReadOnly,)
+    permission_classes = (AllowAny,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("^name",)
     pagination_class = None

@@ -60,8 +60,10 @@ class Recipe(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.name[:MAX_LENGTH_50]} \
-                (Автор: {self.author.username[:MAX_LENGTH_50]})"
+        return (
+            f'{self.name[:MAX_LENGTH_50]} '
+            f'(Автор: {self.author.username[:MAX_LENGTH_50]})'
+        )
 
 
 class Tag(models.Model):
@@ -78,8 +80,10 @@ class Tag(models.Model):
         validators=[
             RegexValidator(
                 regex=r'^[-a-zA-Z0-9_]+$',
-                message='Slug может содержать только \
-                    буквы, цифры, дефисы и подчёркивания.'
+                message=(
+                    'Slug может содержать только '
+                    'буквы, цифры, дефисы и подчёркивания.'
+                )
             )
         ]
     )
@@ -144,7 +148,10 @@ class RecipeIngredient(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.ingredient[:MAX_LENGTH_50]} {self.amount}шт. в {self.recipe[:MAX_LENGTH_50]}'
+        return (
+            f'{self.ingredient[:MAX_LENGTH_50]} {self.amount}шт. '
+            f'в {self.recipe[:MAX_LENGTH_50]}'
+        )
 
 
 class Favorite(models.Model):
@@ -173,8 +180,10 @@ class Favorite(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.user[:MAX_LENGTH_50]} добавил \
-            {self.recipe[:MAX_LENGTH_50]} в избранное'
+        return (
+            f'{self.user[:MAX_LENGTH_50]} добавил '
+            f'{self.recipe[:MAX_LENGTH_50]} в избранное'
+        )
 
 
 class ShoppingCart(models.Model):
@@ -202,5 +211,7 @@ class ShoppingCart(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.user[:MAX_LENGTH_50]} добавил \
-            {self.recipe[:MAX_LENGTH_50]} в список покупок'
+        return (
+            f'{self.user[:MAX_LENGTH_50]} добавил '
+            f'{self.recipe[:MAX_LENGTH_50]} в список покупок'
+        )

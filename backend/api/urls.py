@@ -1,18 +1,17 @@
-from django.urls import path, include
+from django.urls import include, path
 from django.views.static import serve
 from rest_framework.routers import DefaultRouter
 
 from foodgram_backend.settings import BASE_DIR
-from .views import (
-    UsersViewSet, TagViewSet, IngredientViewSet
-)
+from .views import IngredientViewSet, RecipeViewSet, TagViewSet, UsersViewSet
 
 DOCS_DIR = BASE_DIR.parent / 'docs'
 
 router = DefaultRouter()
 router.register(r'users', UsersViewSet, basename='users')
-router.register("tags", TagViewSet, basename="tags")
-router.register("ingredients", IngredientViewSet, basename="ingredients")
+router.register(r'tags', TagViewSet, basename='tags')
+router.register(r'ingredients', IngredientViewSet, basename='ingredients')
+router.register(r'recipes', RecipeViewSet, basename='recipes')
 
 urlpatterns = [
     path('auth/', include('djoser.urls')),

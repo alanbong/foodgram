@@ -1,12 +1,30 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group
 
-from .models import UserModel
+from .models import Subscription, UserModel
+
+
+admin.site.unregister(Group)
+
 
 @admin.register(UserModel)
 class UserModelAdmin(UserAdmin):
-    list_display = ('username', 'id', 'email', 'first_name', 'last_name',
-                    'is_staff')
-    list_filter = ('is_staff', 'is_superuser')
-    search_fields = ('username', 'email')
-    ordering = ('username',)
+    list_display = ('id', 'username', 'first_name',
+                    'last_name', 'email', 'role',
+                    'is_admin', 'subscribers_count')
+    list_filter = ('role', 'username', 'email',)
+    search_fields = ('username', 'email', 'first_name', 'last_name')
+    ordering = ('role', 'username')
+
+    @admin.display(description='Подписчиков у автора')
+    def subscribers_count(self, obj):
+        return obj.subscribers.count()
+
+
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('user', 'author')
+    list_filter = ('user', 'author')
+    search_fields = ('user__username', 'author__username')
+    ordering = ('user__username', 'author__username')

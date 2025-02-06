@@ -1,0 +1,33 @@
+import csv
+import os
+
+from foodgram_backend.settings import BASE_DIR
+from django.core.management.base import BaseCommand
+
+from recipes.models import Ingredient
+
+
+def ingredient_create(row):
+    Ingredient.objects.get_or_create(
+        name=row[0],
+        measurement_unit=row[1],
+    )
+
+
+action = {
+    'ingredients.csv': ingredient_create,
+}
+
+
+class Command(BaseCommand):
+    def add_arguments(self, parser):
+        parser.add_argument('filename', nargs='+', type=str)
+
+    def handle(self, *args, **options):
+        for filename in options['filename']:
+            path = os.path.join(BASE_DIR, 'data/') + filename
+            with open(path, 'r', encoding='utf-8') as file:
+                reader = csv.reader(file)
+                next(reader)
+                for row in reader:
+                    action[filename](row)

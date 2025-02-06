@@ -1,6 +1,6 @@
-from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
+from django.db import models
 
 from .constants import MAX_LENGTH_32, MAX_LENGTH_50
 
@@ -123,11 +123,13 @@ class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
+        related_name='recipe_ingredients',
         verbose_name='Ингридиент',
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
+        related_name='recipe_ingredients',
         verbose_name='Название рецепта'
     )
     amount = models.PositiveSmallIntegerField(
@@ -159,13 +161,13 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='favorite',
+        related_name='favorites',
         verbose_name='Пользователь',
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='favorite',
+        related_name='favorited_by',
         verbose_name='Рецепт'
     )
 
@@ -190,12 +192,12 @@ class ShoppingCart(models.Model):
     """Модель списка покупок."""
     user = models.ForeignKey(
         User,
-        related_name='shopping_cart',
+        related_name='shopping_cart_items',
         on_delete=models.CASCADE,
         verbose_name='Пользователь')
     recipe = models.ForeignKey(
         Recipe,
-        related_name='shopping_cart',
+        related_name='in_shopping_carts',
         verbose_name='Рецепт для приготовления',
         on_delete=models.CASCADE
     )

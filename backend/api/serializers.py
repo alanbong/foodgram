@@ -149,7 +149,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
-    """Сериализатор для ингредиентов в рецепте."""
+    """Сериализатор для отображения ингредиентов в RecipeSerializer."""
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
         source='ingredient'
@@ -205,12 +205,29 @@ class RecipeSerializer(serializers.ModelSerializer):
         return False
 
 
-class IngredientCreateSerializer(serializers.Serializer):
-    """Сериализатор для создания/обновления ингредиентов в рецепте."""
+# class IngredientCreateSerializer(serializers.Serializer):
+#     """Сериализатор для ингредиентов в RecipeCreateSerializer."""
+#     id = serializers.PrimaryKeyRelatedField(
+#         queryset=Ingredient.objects.all()
+#     )
+#     amount = serializers.IntegerField(min_value=1)
+
+#     def to_internal_value(self, data):
+#         if isinstance(data.get('id'), Ingredient):
+#             data['id'] = data['id'].pk
+#         return super().to_internal_value(data)
+
+class IngredientCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор для ингредиентов в RecipeCreateSerializer."""
     id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all()
+        queryset=Ingredient.objects.all(),
+        source='ingredient'
     )
     amount = serializers.IntegerField(min_value=1)
+
+    class Meta:
+        model = RecipeIngredient
+        fields = ('id', 'amount')
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
@@ -248,24 +265,32 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Добавьте хотя бы один ингредиент!'
             )
-
-        ingredient_ids = [item['id'] for item in value]
-        if len(ingredient_ids) != len(set(ingredient_ids)):
+        ingredients = [item['ingredient'] for item in value]
+        if len(ingredients) != len(set(ingredients)):
             raise serializers.ValidationError(
                 'Ингредиенты не должны повторяться.'
             )
+
+        # ingredient_ids = [ingredient.id for ingredient in ingredients]
+        # existing_ingredients = Ingredient.objects.filter(id__in=ingredient_ids)
+        # existing_ids = {ingredient.id for ingredient in existing_ingredients}
+        # # Находим отсутствующие id игредиентов
+        # missing_ids = set(ingredient_ids) - existing_ids
+        # if missing_ids:
+        #     raise serializers.ValidationError(
+        #         f'Ингредиенты с id {list(missing_ids)} не существуют.'
+        #     )
         return value
 
     def handle_ingredients(self, instance, ingredients_data):
         """Обработка ингредиентов для рецепта."""
+        RecipeIngredient.objects.filter(recipe=instance).delete()
         for ingredient_data in ingredients_data:
-            ingredient_id = get_object_or_404(
-                Ingredient, pk=ingredient_data['id']
-            )
+            ingredient = ingredient_data['ingredient']
             amount = ingredient_data['amount']
             RecipeIngredient.objects.update_or_create(
                 recipe=instance,
-                ingredient_id=ingredient_id,
+                ingredient=ingredient,
                 defaults={'amount': amount}
             )
 

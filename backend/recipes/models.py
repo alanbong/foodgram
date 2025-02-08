@@ -1,6 +1,9 @@
+from uuid import uuid4
+
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
+from django.urls import reverse
 
 from .constants import MAX_LENGTH_32, MAX_LENGTH_50
 
@@ -47,6 +50,11 @@ class Recipe(models.Model):
         verbose_name='Дата публикации',
         auto_now_add=True
     )
+    short_link = models.CharField(
+        max_length=8,
+        verbose_name="Короткая ссылка",
+        unique=True
+    )
 
     class Meta:
         ordering = ['-pub_date']
@@ -58,6 +66,20 @@ class Recipe(models.Model):
                 name='unique_name_author'
             )
         ]
+
+    def save(self, *args, **kwargs):
+        if not self.short_link:
+            self.short_link = self.generate_unique_short_url()
+        super().save(*args, **kwargs)
+
+    def generate_unique_short_url(self):
+        while True:
+            short_link = str(uuid4())[:8]
+            if not Recipe.objects.filter(short_link=short_link).exists():
+                return short_link
+
+    def get_absolute_url(self):
+        return reverse('recipes-detail', kwargs={'pk': self.pk})
 
     def __str__(self):
         return (

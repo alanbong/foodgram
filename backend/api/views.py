@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
+from django.views.decorators.http import require_http_methods
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
@@ -371,3 +372,28 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ] = 'attachment; filename=shopping-list.txt'
 
         return response
+
+    @action(
+        detail=True,
+        methods=['get'],
+        permission_classes=[AllowAny],
+        url_path='get-link'
+    )
+    def get_link(self, request, pk=None):
+        recipe = self.get_object()
+        if not recipe.short_link:
+            recipe.short_link = recipe.generate_unique_short_url()
+            recipe.save()
+        short_url = (
+            f"{self.request.scheme}://"
+            f"{self.request.get_host()}/r/"
+            f"{recipe.short_link}"
+        )
+        return Response({"short-link": short_url}, status=status.HTTP_200_OK)
+
+
+@require_http_methods(["GET"])
+def redirect_short_link(request, short_link):
+    """Переадресовывает на оригинальный рецепт."""
+    recipe = get_object_or_404(Recipe, short_link=short_link)
+    return redirect(f"/recipes/{recipe.id}")

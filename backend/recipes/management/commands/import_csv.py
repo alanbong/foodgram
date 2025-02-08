@@ -21,13 +21,17 @@ action = {
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('filename', nargs='+', type=str)
+        parser.add_argument('filename', nargs='?',
+                            default='ingredients.csv', type=str)
 
     def handle(self, *args, **options):
-        for filename in options['filename']:
-            path = os.path.join(BASE_DIR, 'data/') + filename
-            with open(path, 'r', encoding='utf-8') as file:
-                reader = csv.reader(file)
-                next(reader)
-                for row in reader:
-                    action[filename](row)
+        filename = options['filename']
+        path = os.path.join(BASE_DIR.parent, 'data', filename)
+        with open(path, 'r', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            next(reader)
+            for row in reader:
+                action[filename](row)
+        self.stdout.write(self.style.SUCCESS(
+            f"Файл {filename} успешно загружен!"
+        ))

@@ -1,44 +1,32 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.contrib.auth.validators import UnicodeUsernameValidator
 
-from .constants import MAX_LENGTH_150, MAX_LENGTH_50, USER_ROLE, ADMIN_ROLE
-from .validators import validate_username
-
-ROLE_CHOICES = [
-    (USER_ROLE, 'User'),
-    (ADMIN_ROLE, 'Admin'),
-]
+from .constants import USER_PERSONAL_FIELDS_MAX_LENGTH, STR_REPR_MAX_LENGTH
 
 
 class UserModel(AbstractUser):
     """Кастомная модель пользователя с поддержкой ролей."""
     email = models.EmailField(
-        max_length=254,
         unique=True,
         verbose_name='Адрес электронной почты'
     )
     username = models.CharField(
-        max_length=MAX_LENGTH_150,
+        max_length=USER_PERSONAL_FIELDS_MAX_LENGTH,
         unique=True,
         validators=[
-            validate_username
+            UnicodeUsernameValidator
         ],
         verbose_name='Username'
     )
     first_name = models.CharField(
-        max_length=MAX_LENGTH_150,
-        verbose_name="Имя"
+        max_length=USER_PERSONAL_FIELDS_MAX_LENGTH,
+        verbose_name='Имя'
     )
     last_name = models.CharField(
-        max_length=MAX_LENGTH_150,
-        verbose_name="Фамилия"
-    )
-    role = models.CharField(
-        max_length=max(len(role[0]) for role in ROLE_CHOICES),
-        choices=ROLE_CHOICES,
-        default=USER_ROLE,
-        verbose_name='Роль'
+        max_length=USER_PERSONAL_FIELDS_MAX_LENGTH,
+        verbose_name='Фамилия'
     )
     avatar = models.ImageField(
         upload_to='media/avatars/',
@@ -52,7 +40,7 @@ class UserModel(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == ADMIN_ROLE or self.is_superuser or self.is_staff
+        return self.is_superuser or self.is_staff
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -60,7 +48,7 @@ class UserModel(AbstractUser):
         ordering = ['username']
 
     def __str__(self):
-        return self.username[:MAX_LENGTH_50]
+        return self.username[:STR_REPR_MAX_LENGTH]
 
 
 User = get_user_model()
@@ -101,6 +89,6 @@ class Subscription(models.Model):
 
     def __str__(self):
         return (
-            f'{self.user.username[:]} '
-            f'подписан {self.author.username[:MAX_LENGTH_50]}'
+            f'{self.user.username[:STR_REPR_MAX_LENGTH ]} '
+            f'подписан {self.author.username[:STR_REPR_MAX_LENGTH]}'
         )

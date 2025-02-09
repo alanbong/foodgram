@@ -50,16 +50,28 @@ class UsersViewSet(UserViewSet):
         user = request.user
 
         if request.method == 'PUT':
+            if 'avatar' not in request.data:
+                return Response(
+                    {'detail': 'Поле avatar обязательно.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             serializer = self.get_serializer(
                 user, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(
+                    {'avatar': serializer.data['avatar']},
+                    status=status.HTTP_200_OK
+                )
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
             )
-
+        if not user.avatar:
+            return Response(
+                {'detail': 'Аватар отсутствует.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         user.avatar.delete(save=True)
         user.save()
         return Response(
@@ -73,10 +85,10 @@ class UsersViewSet(UserViewSet):
         url_path='subscribe',
         permission_classes=(IsAuthenticated,)
     )
-    def manage_subscription(self, request, pk=None):
+    def manage_subscription(self, request, id=None):
         """Подписка и отписка на пользователя."""
         user = request.user
-        author = get_object_or_404(User, pk=pk)
+        author = get_object_or_404(User, pk=id)
 
         if request.method == 'POST':
             if user == author:

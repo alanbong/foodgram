@@ -40,12 +40,12 @@ class UserModel(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.is_superuser or self.is_staff
+        return self.is_superuser
 
     class Meta:
+        ordering = ('username',)
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ['username']
 
     def __str__(self):
         return self.username[:STR_REPR_MAX_LENGTH]
@@ -70,6 +70,7 @@ class Subscription(models.Model):
     )
 
     class Meta:
+        ordering = ('user', 'author')
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
         constraints = [

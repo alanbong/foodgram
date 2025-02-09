@@ -98,7 +98,7 @@ class UsersViewSet(UserViewSet):
     @add_subscription.mapping.delete
     def remove_subscription(self, request, id=None):
         """Удаление подписки на пользователя."""
-        author = get_object_or_404(User, pk=id) 
+        author = get_object_or_404(User, pk=id)
         deleted, _ = Subscription.objects.filter(
             user=request.user, author=author
         ).delete()

@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from rest_framework import filters, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from django.views.decorators.http import require_http_methods
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -180,17 +180,19 @@ class UsersViewSet(UserViewSet):
         """
         Переопределенный метод изменения пароля:
         - Обычные пользователи меняют свой пароль стандартно.
-        - Администраторы могут менять пароль любого пользователя (`user_id` в запросе).
+        - Администраторы могут менять пароль любого пользователя
+        используя ('user_id' в запросе).
         """
         user = request.user
 
         if 'user_id' in request.data and not user.is_admin:
             return Response(
-                {'error': 'Вы не можете изменить пароль другого пользователя.'},
+                {'error': (
+                    'Вы не можете изменить пароль другого пользователя.')},
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        # Если администратор передал `user_id`,
+        # Если администратор передал 'user_id',
         # меняем пароль указанного пользователя
         if user.is_admin and 'user_id' in request.data:
             user_id = request.data['user_id']
@@ -343,7 +345,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=('get',),
         permission_classes=(IsAuthenticated,),
-        url_path='download_shopping_cart', 
+        url_path='download_shopping_cart',
     )
     def download_shopping_cart(self, request):
         """Скачивание списка покупок."""

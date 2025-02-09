@@ -7,11 +7,7 @@ from .models import (Recipe, Tag, Ingredient,
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
     extra = 1
-
-
-class RecipeTagsInLine(admin.TabularInline):
-    model = Recipe.tags.through
-    extra = 1
+    min_num = 1
 
 
 @admin.register(Recipe)
@@ -20,7 +16,7 @@ class RecipeAdmin(admin.ModelAdmin):
                     'pub_date', 'favorites_count')
     list_filter = ('tags', 'author', 'pub_date')
     search_fields = ('name', 'author__username')
-    inlines = (RecipeIngredientInline, RecipeTagsInLine)
+    inlines = (RecipeIngredientInline,)
     readonly_fields = ('pub_date', 'favorites_count')
 
     @admin.display(description='В избранном')

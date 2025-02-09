@@ -1,7 +1,7 @@
-from django.contrib.auth.models import AbstractUser
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.db import models
 
 from .constants import USER_PERSONAL_FIELDS_MAX_LENGTH, STR_REPR_MAX_LENGTH
 
@@ -71,8 +71,8 @@ class Subscription(models.Model):
 
     class Meta:
         ordering = ('user', 'author')
-        verbose_name = "Подписка"
-        verbose_name_plural = "Подписки"
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
         constraints = [
             models.UniqueConstraint(
                 fields=('user', 'author'),

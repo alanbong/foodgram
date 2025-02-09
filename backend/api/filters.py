@@ -1,10 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.db import connection
-from django_filters import rest_framework as filters
 from django.db.models import Q, Value, Case, When, IntegerField
-from rest_framework.exceptions import ValidationError
+from django_filters import rest_framework as filters
 
-from recipes.models import Recipe, Tag, Ingredient
+from recipes.models import Recipe, Ingredient
 
 User = get_user_model()
 
@@ -35,7 +34,7 @@ class RecipeFilter(filters.FilterSet):
 
 class IngredientFilter(filters.FilterSet):
     name = filters.CharFilter(
-        method='filter_name', label="Поиск по названию")
+        method='filter_name', label='Поиск по названию')
 
     class Meta:
         model = Ingredient

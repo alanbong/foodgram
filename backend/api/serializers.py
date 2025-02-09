@@ -1,10 +1,13 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from djoser.serializers import UserCreateSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from djoser.serializers import UserCreateSerializer
-from django.contrib.auth.validators import UnicodeUsernameValidator
-from recipes.models import (Favorite, Ingredient, Recipe,
-                            RecipeIngredient, ShoppingCart, Tag)
+
+from recipes.models import (
+    Favorite, Ingredient, Recipe,
+    RecipeIngredient, ShoppingCart, Tag
+)
 from users.models import Subscription
 
 
@@ -42,7 +45,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         """Проверяет, подписан ли текущий пользователь на данного автора."""
-        request = self.context.get("request")
+        request = self.context.get('request')
         return (
             request and request.user.is_authenticated
             and Subscription.objects.filter(
@@ -53,6 +56,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class CustomUserCreateSerializer(UserCreateSerializer):
     """Кастомный сериализатор для создания пользователя."""
 
+    # без ручного указывания валидатора не работало
     username = serializers.CharField(
         validators=[UnicodeUsernameValidator()]
     )

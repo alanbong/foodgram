@@ -2,24 +2,26 @@ from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.http import require_http_methods
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from django.views.decorators.http import require_http_methods
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.models import (Ingredient, Recipe, RecipeIngredient,
-                            ShoppingCart, Tag)
+from recipes.models import (
+    Ingredient, Recipe, RecipeIngredient, ShoppingCart, Tag
+)
 from users.models import Subscription
+
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsOwnerOrReadOnly
-from .serializers import (CustomUserSerializer, IngredientSerializer,
-                          RecipeCreateSerializer, RecipeSerializer,
-                          SubscriptionSerializer, SubscriptionCreateSerializer,
-                          TagSerializer, FavoriteSerializer,
-                          ShoppingCartSerializer)
+from .serializers import (
+    CustomUserSerializer, FavoriteSerializer, IngredientSerializer,
+    RecipeCreateSerializer, RecipeSerializer, ShoppingCartSerializer,
+    SubscriptionCreateSerializer, SubscriptionSerializer, TagSerializer
+)
 
 
 User = get_user_model()
@@ -269,8 +271,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response({"short-link": short_url}, status=status.HTTP_200_OK)
 
 
-@require_http_methods(["GET"])
+@require_http_methods(['GET'])
 def redirect_short_link(request, short_link):
     """Переадресовывает на оригинальный рецепт."""
     recipe = get_object_or_404(Recipe, short_link=short_link)
-    return redirect(f"/recipes/{recipe.id}")
+    return redirect(f'/recipes/{recipe.id}')

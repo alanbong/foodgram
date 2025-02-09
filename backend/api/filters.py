@@ -32,7 +32,7 @@ class RecipeFilter(filters.FilterSet):
                 'Параметр "is_favorited" должен быть 0 или 1.'
             )
         if value == 1 and self.request.user.is_authenticated:
-            return queryset.filter(favorites__user=self.request.user)
+            return queryset.filter(favorited_by__user=self.request.user)
         return queryset
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
@@ -41,7 +41,7 @@ class RecipeFilter(filters.FilterSet):
                 'Параметр "is_in_shopping_cart" должен быть 0 или 1.'
             )
         if value == 1 and self.request.user.is_authenticated:
-            return queryset.filter(shopping_cart__user=self.request.user)
+            return queryset.filter(in_shopping_carts__user=self.request.user)
         return queryset
 
 

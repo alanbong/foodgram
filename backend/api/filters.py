@@ -11,37 +11,25 @@ User = get_user_model()
 
 class RecipeFilter(filters.FilterSet):
     """Фильтр для рецептов."""
-    is_favorited = filters.NumberFilter(method='filter_is_favorited')
-    is_in_shopping_cart = filters.NumberFilter(
+    is_favorited = filters.BooleanFilter(method='filter_is_favorited')
+    is_in_shopping_cart = filters.BooleanFilter(
         method='filter_is_in_shopping_cart'
     )
     author = filters.ModelChoiceFilter(queryset=User.objects.all())
-    tags = filters.ModelMultipleChoiceFilter(
-        field_name="tags__slug",
-        to_field_name="slug",
-        queryset=Tag.objects.all(),
-    )
+    tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
 
     class Meta:
         model = Recipe
         fields = ('author', 'tags', 'is_favorited', 'is_in_shopping_cart')
 
     def filter_is_favorited(self, queryset, name, value):
-        if value not in [0, 1]:
-            raise ValidationError(
-                'Параметр "is_favorited" должен быть 0 или 1.'
-            )
-        if value == 1 and self.request.user.is_authenticated:
-            return queryset.filter(favorited_by__user=self.request.user)
+        if value and self.request.user.is_authenticated:
+            return queryset.filter(favorite__user=self.request.user)
         return queryset
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
-        if value not in [0, 1]:
-            raise ValidationError(
-                'Параметр "is_in_shopping_cart" должен быть 0 или 1.'
-            )
-        if value == 1 and self.request.user.is_authenticated:
-            return queryset.filter(in_shopping_carts__user=self.request.user)
+        if value and self.request.user.is_authenticated:
+            return queryset.filter(shoppingcart__user=self.request.user)
         return queryset
 
 
@@ -51,7 +39,7 @@ class IngredientFilter(filters.FilterSet):
 
     class Meta:
         model = Ingredient
-        fields = ['name']
+        fields = ('name',)
 
     def filter_name(self, queryset, name, value):
         if not value:
@@ -59,9 +47,9 @@ class IngredientFilter(filters.FilterSet):
 
         value_lower = value.lower()
 
-        # 🔍 Если база данных - SQLite, фильтруем вручную
+        # Если бд - SQLite, фильтруем вручную
         if connection.vendor == 'sqlite':
-            # Разделяем на две группы
+
             starts_with = sorted(
                 [obj for obj in queryset
                  if obj.name.lower().startswith(value_lower)],
@@ -84,7 +72,7 @@ class IngredientFilter(filters.FilterSet):
                 id__in=[obj.id for obj in sorted_objects]
             ).order_by(preserved_order)
 
-        # В PostgreSQL работаем стандартным способом
+        # Если бд - PostgreSQL, фильтруем стандартным способом
         return queryset.annotate(
             priority=Case(
                 When(name__istartswith=value_lower, then=Value(0)),

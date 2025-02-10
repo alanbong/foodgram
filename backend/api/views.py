@@ -171,17 +171,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def _remove_recipe_from_list(self, serializer_class, request, pk):
         """Общий метод для удаления рецепта из списка."""
-        deleted, _ = serializer_class.Meta.model.objects.filter(
-            user=request.user, recipe_id=pk
+        recipe = get_object_or_404(Recipe, id=pk)
+
+        model = serializer_class.Meta.model
+
+        deleted_count, _ = model.objects.filter(
+            user=request.user, recipe=recipe
         ).delete()
 
-        if not deleted:
+        if deleted_count == 0:
             return Response(
                 {'errors': 'Рецепт не найден в списке.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
     @action(
         detail=True,

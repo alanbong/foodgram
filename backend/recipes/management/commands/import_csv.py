@@ -35,9 +35,10 @@ class Command(BaseCommand):
 
         # Создание тегов после загрузки CSV для тестов
         from recipes.models import Tag
-        tags = ['test_tag1', 'test_tag2', 'test_tag3']
-        for tag_name in tags:
-            Tag.objects.get_or_create(name=tag_name, slug=tag_name.lower())
+        tags = ['Завтрак', 'Обед', 'Ужин']
+        tags_slugs = ['Zavtrak', 'Obed', 'Uzhin']
+        for tag_name, tag_slug in zip(tags, tags_slugs):
+            Tag.objects.get_or_create(name=tag_name, slug=tag_slug)
 
         self.stdout.write(self.style.SUCCESS(
             f"Файл {filename} успешно загружен!"

@@ -166,6 +166,7 @@ DJOSER = {
     'LOGIN_FIELD': 'email',
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {
+        # оставил CustomUserCreateSerializer, так у нас кастомная валидация
         'user_create': 'api.serializers.CustomUserCreateSerializer',
         'user_list': 'api.serializers.CustomUserSerializer',
         'user': 'api.serializers.CustomUserSerializer',

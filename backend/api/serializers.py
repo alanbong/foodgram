@@ -20,7 +20,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     """Сериализатор Users."""
 
     is_subscribed = serializers.SerializerMethodField()
-    avatar = Base64ImageField(required=True)
+    avatar = Base64ImageField(required=False)
 
     class Meta:
         model = User
@@ -302,6 +302,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         """Обработка ингредиентов для рецепта."""
         # у .clear() писало
         # AttributeError: 'QuerySet' object has no attribute 'clear'
+        # я так полагаю, так как мы испльзуем промежуточную модель
         RecipeIngredient.objects.filter(recipe=instance).delete()
 
         RecipeIngredient.objects.bulk_create([

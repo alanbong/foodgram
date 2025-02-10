@@ -33,7 +33,7 @@ class Command(BaseCommand):
             for row in reader:
                 action[filename](row)
 
-        # Создание тегов после загрузки CSV
+        # Создание тегов после загрузки CSV для тестов
         from recipes.models import Tag
         tags = ['test_tag1', 'test_tag2', 'test_tag3']
         for tag_name in tags:

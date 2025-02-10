@@ -186,7 +186,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
     @action(
         detail=True,
         methods=('post',),

@@ -1,17 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from djoser.serializers import UserCreateSerializer
 from django.shortcuts import get_object_or_404
+from djoser.serializers import UserCreateSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from recipes.models import (
-    Favorite, Ingredient, Recipe,
-    RecipeIngredient, ShoppingCart, Tag
-)
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingCart, Tag)
 from users.constants import USER_PERSONAL_FIELDS_MAX_LENGTH
 from users.models import Subscription
-
 
 User = get_user_model()
 

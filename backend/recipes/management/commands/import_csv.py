@@ -1,9 +1,9 @@
 import csv
 import os
 
-from foodgram_backend.settings import BASE_DIR
 from django.core.management.base import BaseCommand
 
+from foodgram_backend.settings import BASE_DIR
 from recipes.models import Ingredient
 
 

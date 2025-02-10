@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 
-from .constants import USER_PERSONAL_FIELDS_MAX_LENGTH, STR_REPR_MAX_LENGTH
+from .constants import STR_REPR_MAX_LENGTH, USER_PERSONAL_FIELDS_MAX_LENGTH
 
 
 class UserModel(AbstractUser):

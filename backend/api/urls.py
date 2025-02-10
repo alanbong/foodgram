@@ -3,8 +3,9 @@ from django.views.static import serve
 from rest_framework.routers import DefaultRouter
 
 from foodgram_backend.settings import BASE_DIR
-from .views import (IngredientViewSet, RecipeViewSet,
-                    TagViewSet, UsersViewSet, redirect_short_link)
+
+from .views import (IngredientViewSet, RecipeViewSet, TagViewSet, UsersViewSet,
+                    redirect_short_link)
 
 DOCS_DIR = BASE_DIR.parent / 'docs'
 

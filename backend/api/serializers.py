@@ -1,12 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from djoser.serializers import UserCreateSerializer
+from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from recipes.constants import (
-    RECIPE_NAME_MAX_LENGTH
-)
 from recipes.models import (
     Favorite, Ingredient, Recipe,
     RecipeIngredient, ShoppingCart, Tag
@@ -77,11 +75,22 @@ class RecipeShortSerializer(serializers.ModelSerializer):
 class SubscriptionSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения подписок."""
 
+    email = serializers.EmailField(source='author.email', read_only=True)
+    id = serializers.IntegerField(source='author.id', read_only=True)
+    username = serializers.CharField(source='author.username', read_only=True)
+    first_name = serializers.CharField(
+        source='author.first_name',
+        read_only=True
+    )
+    last_name = serializers.CharField(
+        source='author.last_name',
+        read_only=True
+    )
     is_subscribed = serializers.SerializerMethodField()
-    avatar = serializers.ImageField(source='avatar.url', read_only=True)
+    avatar = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.IntegerField(
-        source='recipes.count',
+        source='author.recipes.count',
         read_only=True
     )
 
@@ -115,6 +124,12 @@ class SubscriptionSerializer(serializers.ModelSerializer):
                 ).data
 
         return RecipeShortSerializer(obj.author.recipes.all(), many=True).data
+
+    def get_avatar(self, obj):
+        """Возвращает ссылку на аватар пользователя."""
+        if obj.author.avatar:
+            return obj.author.avatar.url
+        return None
 
 
 class SubscriptionCreateSerializer(serializers.ModelSerializer):
@@ -240,11 +255,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         many=True
     )
     image = Base64ImageField(required=True)
-    name = serializers.CharField(
-        required=True
-    )
-    text = serializers.CharField(required=True)
-    cooking_time = serializers.IntegerField(required=True)
 
     class Meta:
         model = Recipe
@@ -352,7 +362,13 @@ class BaseRecipeRelationSerializer(serializers.ModelSerializer):
         """Создает объект ShoppingCart/Favorite."""
         user = self.context['request'].user
         recipe_id = self.context.get('recipe_id')
-        recipe = Recipe.objects.get(id=recipe_id)
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+
+        if self.Meta.model.objects.filter(user=user, recipe=recipe).exists():
+            raise serializers.ValidationError(
+                {'error': 'Рецепт уже в списке.'}
+            )
+
         return self.Meta.model.objects.create(user=user, recipe=recipe)
 
 

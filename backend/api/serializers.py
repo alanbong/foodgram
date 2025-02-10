@@ -4,10 +4,14 @@ from djoser.serializers import UserCreateSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
+from recipes.constants import (
+    RECIPE_NAME_MAX_LENGTH
+)
 from recipes.models import (
     Favorite, Ingredient, Recipe,
     RecipeIngredient, ShoppingCart, Tag
 )
+from users.constants import USER_PERSONAL_FIELDS_MAX_LENGTH
 from users.models import Subscription
 
 
@@ -58,6 +62,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
     # без ручного указывания валидатора не работало
     username = serializers.CharField(
+        max_length=USER_PERSONAL_FIELDS_MAX_LENGTH,
         validators=[UnicodeUsernameValidator()]
     )
 
@@ -235,7 +240,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         many=True
     )
     image = Base64ImageField(required=True)
-    name = serializers.CharField(required=True)
+    name = serializers.CharField(
+        required=True
+    )
     text = serializers.CharField(required=True)
     cooking_time = serializers.IntegerField(required=True)
 
@@ -254,6 +261,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         """Валидация полей рецепта."""
         ingredients = attrs.get('ingredients', [])
         tags = attrs.get('tags', [])
+        image = attrs.get('image', [])
         if not tags:
             raise serializers.ValidationError(
                 'Добавьте хотя бы один тег!'
@@ -261,6 +269,10 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         if not ingredients:
             raise serializers.ValidationError(
                 'Добавьте хотя бы один ингредиент!'
+            )
+        if not image:
+            raise serializers.ValidationError(
+                'Добавьте изображение рецепта!'
             )
 
         tag_ids = [tag.id for tag in tags]
@@ -278,7 +290,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     @staticmethod
     def handle_ingredients(instance, ingredients_data):
         """Обработка ингредиентов для рецепта."""
-        instance.recipe_ingredients.clear()
+        # у .clear() писало
+        # AttributeError: 'QuerySet' object has no attribute 'clear'
+        RecipeIngredient.objects.filter(recipe=instance).delete()
 
         RecipeIngredient.objects.bulk_create([
             RecipeIngredient(recipe=instance, **ingredient_data)

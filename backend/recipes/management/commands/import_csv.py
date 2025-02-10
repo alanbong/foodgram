@@ -32,6 +32,13 @@ class Command(BaseCommand):
             next(reader)
             for row in reader:
                 action[filename](row)
+
+        # Создание тегов после загрузки CSV
+        from recipes.models import Tag
+        tags = ['test_tag1', 'test_tag2', 'test_tag3']
+        for tag_name in tags:
+            Tag.objects.get_or_create(name=tag_name, slug=tag_name.lower())
+
         self.stdout.write(self.style.SUCCESS(
             f"Файл {filename} успешно загружен!"
         ))

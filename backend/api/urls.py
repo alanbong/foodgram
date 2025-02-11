@@ -17,8 +17,6 @@ router.register(r'recipes', RecipeViewSet, basename='recipes')
 urlpatterns = [
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
-    # Маршрут для переадресации по короткой ссылке
-    
     path('', include(router.urls)),
     path(
         'redoc/', serve,

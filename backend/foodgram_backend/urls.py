@@ -8,6 +8,7 @@ from api.views import redirect_short_link
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
+    # Маршрут для переадресации по короткой ссылке
     path('r/<str:short_link>/', redirect_short_link,
          name='redirect-short-link'),
 ]

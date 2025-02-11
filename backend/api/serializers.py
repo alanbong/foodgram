@@ -229,7 +229,11 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         """Валидация полей рецепта."""
         ingredients = attrs.get('ingredients', [])
         tags = attrs.get('tags', [])
-        image = attrs.get('image', [])
+        if self.instance is None and 'image' not in attrs:
+            raise serializers.ValidationError(
+                'Добавьте изображение рецепта!'
+            )
+
         if not tags:
             raise serializers.ValidationError(
                 'Добавьте хотя бы один тег!'

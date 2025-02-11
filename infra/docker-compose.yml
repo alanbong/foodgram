@@ -17,7 +17,7 @@ services:
 
   backend:
     container_name: foodgram-backend
-    build: ./backend/
+    image: alanbong/foodgram_backend
     env_file: .env
     volumes:
       - backend_static:/app/backend_static/
@@ -27,10 +27,10 @@ services:
 
   frontend:
     container_name: foodgram-front
-    build: ../frontend
+    image: alanbong/foodgram_frontend
     volumes:
       - frontend_static:/app/result_build/build
-  
+
   nginx:
     container_name: foodgram-proxy
     image: nginx:1.25.4-alpine
@@ -44,3 +44,4 @@ services:
       - ../docs/:/usr/share/nginx/html/api/docs/
       - media:/gateway_media
       - backend_static:/gateway_static
+

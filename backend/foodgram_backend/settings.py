@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
-    'corsheaders',
+    # 'corsheaders',
 
     'users.apps.UsersConfig',
     'recipes.apps.RecipesConfig',
@@ -137,10 +137,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.UserModel'
 
-CORS_ALLOWED_ORIGINS = [
-    'https://alanb0ng.ddns.net',
-]
-CORS_URLS_REGEX = r'^/api/.*$'
+# CORS_ALLOWED_ORIGINS = [
+#     'https://alanb0ng.ddns.net',
+#     'http://alanb0ng.ddns.net'
+# ]
+# CORS_URLS_REGEX = r'^/api/.*$'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -172,7 +173,7 @@ DJOSER = {
     'HIDE_USERS': False,
 }
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://alanb0ng.ddns.net",
-    "http://localhost:8000",
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     "https://alanb0ng.ddns.net",
+#     "http://localhost:8000",
+# ]

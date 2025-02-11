@@ -29,10 +29,10 @@ services:
     image: alanbong/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
+
   nginx:
     container_name: foodgram-proxy
-    env_file: .env
-    image: alanbong/foodgram_gateway
+    image: nginx:1.25.4-alpine
     depends_on:
       - backend
     ports:

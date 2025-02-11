@@ -117,7 +117,7 @@ class UsersViewSet(UserViewSet):
         """Получение списка подписок пользователя."""
         user = request.user
         authors = User.objects.filter(
-            subscriptions__user=user
+            subscribers__user=user
         ).prefetch_related('recipes')
         page = self.paginate_queryset(authors)
         serializer = SubscriptionSerializer(

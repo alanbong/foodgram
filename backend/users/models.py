@@ -16,7 +16,7 @@ class UserModel(AbstractUser):
         max_length=USER_PERSONAL_FIELDS_MAX_LENGTH,
         unique=True,
         validators=[
-            UnicodeUsernameValidator
+            UnicodeUsernameValidator()
         ],
         verbose_name='Username'
     )
@@ -29,7 +29,7 @@ class UserModel(AbstractUser):
         verbose_name='Фамилия'
     )
     avatar = models.ImageField(
-        upload_to='media/avatars/',
+        upload_to='users/image',
         blank=True,
         null=True,
         verbose_name='Аватар профиля'

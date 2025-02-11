@@ -4,7 +4,7 @@
 
 Foodgram
 
-**_Ссылка на [foodgram](https://alanbong.ddns.net)_**
+**_Ссылка на [foodgram](https://alanb0ng.ddns.net)_**
 
 ## Описание
 

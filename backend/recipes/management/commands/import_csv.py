@@ -39,7 +39,7 @@ class Command(BaseCommand):
             if not os.path.exists(file_path):
                 self.stdout.write(self.style.WARNING(
                     f"Файл {filename} не найден, пропускаем."
-                ))
+                ))вгсщ 
                 continue
 
             with open(file_path, 'r', encoding='utf-8') as file:

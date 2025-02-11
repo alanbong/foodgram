@@ -137,10 +137,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.UserModel'
 
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:3000',
-# ]
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    'https://alanb0ng.ddns.net',
+]
 CORS_URLS_REGEX = r'^/api/.*$'
 
 REST_FRAMEWORK = {
@@ -172,3 +171,8 @@ DJOSER = {
     },
     'HIDE_USERS': False,
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://alanb0ng.ddns.net",
+    "http://localhost:8000",
+]

@@ -250,10 +250,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Добавьте хотя бы один ингредиент!'
             )
-        if not image:
-            raise serializers.ValidationError(
-                'Добавьте изображение рецепта!'
-            )
 
         tag_ids = [tag.id for tag in tags]
         if len(tag_ids) != len(set(tag_ids)):

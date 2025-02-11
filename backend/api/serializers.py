@@ -270,13 +270,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ingredients_data = validated_data.pop('ingredients')
         tags_data = validated_data.pop('tags')
 
-        # if Recipe.objects.filter(
-        #     author=author, name=validated_data['name']
-        # ).exists():
-        #     raise serializers.ValidationError({
-        #         'name': 'У вас уже существует рецепт с таким названием.'
-        #     })
-
         recipe = Recipe.objects.create(author=author, **validated_data)
         recipe.tags.set(tags_data)
 

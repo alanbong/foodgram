@@ -27,7 +27,7 @@ class Recipe(models.Model):
         verbose_name='Название рецепта'
     )
     image = models.ImageField(
-        upload_to='media/recipes/',
+        upload_to='recipes/images',
         verbose_name='Картинка рецепта',
     )
     text = models.TextField(
@@ -72,12 +72,6 @@ class Recipe(models.Model):
         ordering = ('-pub_date',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        constraints = [
-            models.UniqueConstraint(
-                fields=('name', 'author'),
-                name='unique_name_author'
-            )
-        ]
 
     def save(self, *args, **kwargs):
         if not self.short_link:

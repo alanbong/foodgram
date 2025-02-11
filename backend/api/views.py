@@ -79,19 +79,17 @@ class UsersViewSet(UserViewSet):
     )
     def add_subscription(self, request, id=None):
         """Подписка на пользователя."""
+
         author = get_object_or_404(User, pk=id)
+
         serializer = SubscriptionCreateSerializer(
             data={'user': request.user.id, 'author': author.id},
             context={'request': request}
         )
+
         serializer.is_valid(raise_exception=True)
-        subscription = serializer.save()
-        return Response(
-            SubscriptionSerializer(
-                subscription, context={'request': request}
-            ).data,
-            status=status.HTTP_201_CREATED
-        )
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @add_subscription.mapping.delete
     def remove_subscription(self, request, id=None):
@@ -118,10 +116,10 @@ class UsersViewSet(UserViewSet):
     def subscriptions(self, request):
         """Получение списка подписок пользователя."""
         user = request.user
-        subscriptions = Subscription.objects.filter(
-            user=user
-        ).prefetch_related('author__recipes')
-        page = self.paginate_queryset(subscriptions)
+        authors = User.objects.filter(
+            subscriptions__user=user
+        ).prefetch_related('recipes')
+        page = self.paginate_queryset(authors)
         serializer = SubscriptionSerializer(
             page, many=True, context={'request': request}
         )
@@ -161,9 +159,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def _add_recipe_to_list(self, serializer_class, request, pk):
         """Общий метод для добавления рецепта в список."""
-        context = {'request': request, 'recipe_id': pk}
-        serializer = serializer_class(data={}, context=context)
+        context = {'request': request}
+        recipe = get_object_or_404(Recipe, id=pk)
+        serializer = serializer_class(
+            data={'user': request.user.id, 'recipe': recipe.id},
+            context=context
+        )
         serializer.is_valid(raise_exception=True)
+
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -177,7 +180,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             user=request.user, recipe=recipe
         ).delete()
 
-        if deleted_count == 0:
+        if not deleted_count:
             return Response(
                 {'errors': 'Рецепт не найден в списке.'},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -211,6 +214,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def add_to_shopping_cart(self, request, pk=None):
         """Добавление рецепта в список покупок."""
+        print("DEBUG: Вызван add_to_shopping_cart")
+        print(f"DEBUG: request.user = {request.user}, pk = {pk}")
+        print(f"DEBUG: request.data = {request.data}")
         return self._add_recipe_to_list(
             ShoppingCartSerializer, request, pk
         )

@@ -237,5 +237,6 @@ Authorization: Token <токен>
 ## Авторы
 Backand:
 - [alanbong](https://github.com/alanbong)
+
 Frontend:
 - [yandex-praktikum](https://github.com/yandex-praktikum)

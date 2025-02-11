@@ -173,7 +173,7 @@ DJOSER = {
     'HIDE_USERS': False,
 }
 
-# CSRF_TRUSTED_ORIGINS = [
-#     "https://alanb0ng.ddns.net",
-#     "http://localhost:8000",
-# ]
+CSRF_TRUSTED_ORIGINS = [
+    'https://alanb0ng.ddns.net',
+    'http://alanb0ng.ddns.net'
+]

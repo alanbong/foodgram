@@ -20,7 +20,7 @@ services:
     image: alanbong/foodgram_backend
     env_file: .env
     volumes:
-      - backend_static::/app/backend_static/
+      - backend_static:/app/backend_static/
       - media:/app/backend_media/
     depends_on:
       - db

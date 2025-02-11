@@ -102,135 +102,136 @@ Authorization: Token <токен>
     ```
 
 2. **Регистрация пользователя**
-```
-POST /api/users/
-```
-**Ответ:**
-```json
-{
-  "email": "vpupkin@yandex.ru",
-  "id": 1,
-  "username": "vasya.pupkin",
-  "first_name": "Вася",
-  "last_name": "Иванов"
-}
-```
-3. **Получение информации о пользователе**
-```
-GET /api/users/{id}/
-```
-**Ответ:**
-```json
-{
-  "email": "vpupkin@yandex.ru",
-  "id": 1,
-  "username": "vasya.pupkin",
-  "first_name": "Вася",
-  "last_name": "Иванов",
-  "is_subscribed": false,
-  "avatar": "http://foodgram.example.org/media/users/image.png"
-}
-```
-4. **Список тегов**
-```
-GET /api/tags/
-```
-**Ответ:**
-```json
-[
-  {
-    "id": 1,
-    "name": "Завтрак",
-    "slug": "breakfast"
-  }
-]
-```
-5. **Создание рецепта**
-```
-POST /api/recipes/
-```
-**Ответ:**
-```json
-{
-  "id": 42,
-  "tags": [{"id": 1, "name": "Завтрак", "slug": "breakfast"}],
-  "author": {
+    ```
+    POST /api/users/
+    ```
+    **Ответ:**
+    ```json
+    {
     "email": "vpupkin@yandex.ru",
     "id": 1,
     "username": "vasya.pupkin",
     "first_name": "Вася",
     "last_name": "Иванов"
-  },
-  "ingredients": [
-    {
-      "id": 1123,
-      "name": "Картофель отварной",
-      "measurement_unit": "г",
-      "amount": 10
     }
-  ],
-  "is_favorited": false,
-  "is_in_shopping_cart": false,
-  "name": "Омлет с картофелем",
-  "image": "http://foodgram.example.org/media/recipes/images/image.png",
-  "text": "Описание рецепта",
-  "cooking_time": 30
-}
-```
+    ```
+3. **Получение информации о пользователе**
+    ```
+    GET /api/users/{id}/
+    ```
+    **Ответ:**
+    ```json
+    {
+    "email": "vpupkin@yandex.ru",
+    "id": 1,
+    "username": "vasya.pupkin",
+    "first_name": "Вася",
+    "last_name": "Иванов",
+    "is_subscribed": false,
+    "avatar": "http://foodgram.example.org/media/users/image.png"
+    }
+    ```
+4. **Список тегов**
+    ```
+    GET /api/tags/
+    ```
+    **Ответ:**
+    ```json
+    [
+    {
+        "id": 1,
+        "name": "Завтрак",
+        "slug": "breakfast"
+    }
+    ]
+    ```
+5. **Создание рецепта**
+    ```
+    POST /api/recipes/
+    ```
+    **Ответ:**
+    ```json
+    {
+    "id": 42,
+    "tags": [{"id": 1, "name": "Завтрак", "slug": "breakfast"}],
+    "author": {
+        "email": "vpupkin@yandex.ru",
+        "id": 1,
+        "username": "vasya.pupkin",
+        "first_name": "Вася",
+        "last_name": "Иванов"
+    },
+    "ingredients": [
+        {
+        "id": 1123,
+        "name": "Картофель отварной",
+        "measurement_unit": "г",
+        "amount": 10
+        }
+    ],
+    "is_favorited": false,
+    "is_in_shopping_cart": false,
+    "name": "Омлет с картофелем",
+    "image": "http://foodgram.example.org/media/recipes/images/image.png",
+    "text": "Описание рецепта",
+    "cooking_time": 30
+    }
+    ```
 6. **Скачать список покупок**
-```
-GET /api/recipes/download_shopping_cart/
-```
-**Ответ:**
-```
-Список покупок:
-- Картофель отварной: 10 г
-- Яйца: 2 шт
-```
+    ```
+    GET /api/recipes/download_shopping_cart/
+    ```
+    **Ответ:**
+    ```
+    Список покупок:
+    - Картофель отварной: 10 г
+    - Яйца: 2 шт
+    ```
 7. **Добавить рецепт в избранное**
-```
-POST /api/recipes/{id}/favorite/
-```
-**Ответ:**
-```json
-{
-  "id": 42,
-  "name": "Омлет с картофелем",
-  "image": "http://foodgram.example.org/media/recipes/images/image.png",
-  "cooking_time": 30
-}
-```
+    ```
+    POST /api/recipes/{id}/favorite/
+    ```
+    **Ответ:**
+    ```json
+    {
+    "id": 42,
+    "name": "Омлет с картофелем",
+    "image": "http://foodgram.example.org/media/recipes/images/image.png",
+    "cooking_time": 30
+    }
+    ```
 8. **Изменение пароля**
-```
-POST /api/users/set_password/
-```
-**Ответ:**  
-```json
-{}
-```
-(Статус-код 204)
+    ```
+    POST /api/users/set_password/
+    ```
+    **Ответ:**  
+    ```json
+    {}
+    ```
+    (Статус-код 204)
+
 9. **Получение токена авторизации**
-```
-POST /api/auth/token/login/
-```
-**Ответ:**
-```json
-{
-  "auth_token": "string"
-}
-```
+    ```
+    POST /api/auth/token/login/
+    ```
+    **Ответ:**
+    ```json
+    {
+    "auth_token": "string"
+    }
+    ```
 10. **Получение ингредиента**
-```
-GET /api/ingredients/{id}/
-```
-**Ответ:**
-```json
-{
-  "id": 5,
-  "name": "Молоко",
-  "measurement_unit": "л"
-}
-```
+    ```
+    GET /api/ingredients/{id}/
+    ```
+    **Ответ:**
+    ```json
+    {
+    "id": 5,
+    "name": "Молоко",
+    "measurement_unit": "л"
+    }
+    ```
 
 
 ## Авторы

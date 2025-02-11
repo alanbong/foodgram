@@ -3,7 +3,7 @@ import os
 
 from django.core.management.base import BaseCommand
 from foodgram_backend.settings import BASE_DIR
-from recipes.models import Ingredient
+from recipes.models import Ingredient, Tag
 
 
 def ingredient_create(row):
@@ -13,32 +13,40 @@ def ingredient_create(row):
     )
 
 
+def tag_create(row):
+    """Создаёт тег из строки CSV."""
+    Tag.objects.get_or_create(
+        name=row[0],
+        slug=row[1],
+    )
+
+
 action = {
     'ingredients.csv': ingredient_create,
+    'tags.csv': tag_create,
 }
 
 
 class Command(BaseCommand):
-    def add_arguments(self, parser):
-        parser.add_argument('filename', nargs='?',
-                            default='ingredients.csv', type=str)
+    help = 'Загружает данные из CSV-файлов (ингредиенты и теги).'
 
     def handle(self, *args, **options):
-        filename = options['filename']
-        path = os.path.join(BASE_DIR.parent, 'data', filename)
-        with open(path, 'r', encoding='utf-8') as file:
-            reader = csv.reader(file)
-            next(reader)
-            for row in reader:
-                action[filename](row)
+        """Загружает все CSV файлы"""
+        data_dir = os.path.join(BASE_DIR.parent, 'data')
+        for filename, process_function in action.items():
+            file_path = os.path.join(data_dir, filename)
 
-        # Создание тегов после загрузки CSV для тестов
-        from recipes.models import Tag
-        tags = ['Завтрак', 'Обед', 'Ужин']
-        tags_slugs = ['Zavtrak', 'Obed', 'Uzhin']
-        for tag_name, tag_slug in zip(tags, tags_slugs):
-            Tag.objects.get_or_create(name=tag_name, slug=tag_slug)
+            if not os.path.exists(file_path):
+                self.stdout.write(self.style.WARNING(
+                    f"Файл {filename} не найден, пропускаем."
+                ))
+                continue
 
-        self.stdout.write(self.style.SUCCESS(
-            f"Файл {filename} успешно загружен!"
-        ))
+            with open(file_path, 'r', encoding='utf-8') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    process_function(row)
+
+            self.stdout.write(self.style.SUCCESS(
+                f"Файл {filename} успешно загружен!"
+            ))

@@ -77,29 +77,29 @@ Authorization: Token <токен>
 ```
 
 ### Примеры запросов
-1. ## Получение списка пользователей
-```
-GET /api/users/
-```
-**Ответ:**
-```json
-{
-  "count": 123,
-  "next": "http://foodgram.example.org/api/users/?page=4",
-  "previous": "http://foodgram.example.org/api/users/?page=2",
-  "results": [
+1. **Получение списка пользователей**
+    ```
+    GET /api/users/
+    ```
+    **Ответ:**
+    ```json
     {
-      "email": "vpupkin@yandex.ru",
-      "id": 1,
-      "username": "vasya.pupkin",
-      "first_name": "Вася",
-      "last_name": "Иванов",
-      "is_subscribed": false,
-      "avatar": "http://foodgram.example.org/media/users/image.png"
+    "count": 123,
+    "next": "http://foodgram.example.org/api/users/?page=4",
+    "previous": "http://foodgram.example.org/api/users/?page=2",
+    "results": [
+        {
+        "email": "vpupkin@yandex.ru",
+        "id": 1,
+        "username": "vasya.pupkin",
+        "first_name": "Вася",
+        "last_name": "Иванов",
+        "is_subscribed": false,
+        "avatar": "http://foodgram.example.org/media/users/image.png"
+        }
+    ]
     }
-  ]
-}
-```
+    ```
 
 2. **Регистрация пользователя**
 ```

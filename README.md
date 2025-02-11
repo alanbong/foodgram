@@ -22,24 +22,32 @@ Foodgram — это продуктовый помощник, который по
 - Поиск по ингредиентам
 
 ## Установка
-1. Создать директорию foodgram, в ней пустой файл .env и папку infra:
+1. Создать директорию foodgram, в ней пустой файл .env:
     ```
     foodgram/
-    │── infra/
     │── .env
-
     ```
-1. Скопировать файлы из репозитория в папке infra в foodgram/infra:
+
+2. Если используется внешний Nginx, настройте его по аналогии с server_nginx.conf из папки infra.
+   Если внешний nginx **не используется**, замените строку с портами в `docker-compose.yml`, установив:
+   ```
+    ports:
+      - "80:80"
+    ```
+    (Файл `docker-compose.yml`, секция с сервисом `nginx`).
+
+3. Скопировать файлы из репозитория в папке infra:
     - docker-compose.yml
     - nginx.conf
     ```
     foodgram/
     │── infra/
-    │   │── docker-compose.yml
-    │   │── nginx.conf
+    │── docker-compose.yml
+    │── nginx.conf
     │── .env
     ```
-2. Заполнить .env следующими данными(для примера можно воспользоваться .env.example в корне проекта):
+
+4. Заполнить .env следующими данными(для примера можно воспользоваться .env.example в корне проекта):
     ```
     SECRET_KEY=<КЛЮЧ>
     DEBUG=True(если на процессе отладки)
@@ -52,24 +60,25 @@ Foodgram — это продуктовый помощник, который по
     DB_HOST=db
     DB_PORT=5432
     ```
-3. Перейти в папку infra и выполнить команды::
+
+5. Перейти в папку infra и выполнить команды::
     ```
     docker-compose up -d
     docker-compose exec backend python manage.py makemigrations
     docker-compose exec backend python manage.py migrate
     docker-compose exec backend python manage.py collectstatic --no-input
-    # опциональная команда для загрузки тестовых данных ingredients.csv и tags.csv из папки data
-    docker-compose exec backend python manage.py import_csv
     ```
-4. Создайте суперпользователя выполнив команду и следуя инструкции в терминале:
+6. Создайте суперпользователя выполнив команду и следуя инструкции в терминале:
     ```
     docker-compose exec backend python manage.py createsuperuser
     ```
-5. Запустите проект:
+7. Запустите проект:
     ```
     python backend/manage.py runserver
     ```
-6. Опционально. После запуска сервера полная версия документации API доступна будет доступна [здесь](http://127.0.0.1:8000/api/redoc/)
+8. (Опционально) После запуска сервера полная версия документации API будет доступна по адресу:
+  - Локально: [http://127.0.0.1:8000/api/redoc/](http://127.0.0.1:8000/api/redoc/)
+  - На сервере: [http://<ваш_домен>/api/redoc/](http://<ваш_домен>/api/redoc/)
 
 
 ### Авторизация:

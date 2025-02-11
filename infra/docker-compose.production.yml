@@ -36,7 +36,7 @@ services:
     depends_on:
       - backend
     ports:
-      - 800:80
+      - 8000:80
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/

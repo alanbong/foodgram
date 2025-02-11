@@ -27,8 +27,16 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'avatar',
         )
 
+    def create(self, validated_data):
+        """Приводит email к нижнему регистру перед созданием пользователя."""
+        validated_data['email'] = validated_data['email'].lower()
+        return super().create(validated_data)
+
     def validate(self, attrs):
         """Валидация полей пользователя."""
+        if 'email' in attrs:
+            attrs['email'] = attrs['email'].lower()
+
         if (
             self.context.get('request').method == 'PUT'
             and not attrs.get('avatar')

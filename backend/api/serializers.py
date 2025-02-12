@@ -27,16 +27,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'avatar',
         )
 
-    def create(self, validated_data):
-        """Приводит email к нижнему регистру перед созданием пользователя."""
-        validated_data['email'] = validated_data['email'].lower()
-        return super().create(validated_data)
-
     def validate(self, attrs):
         """Валидация полей пользователя."""
-        if 'email' in attrs:
-            attrs['email'] = attrs['email'].lower()
-
         if (
             self.context.get('request').method == 'PUT'
             and not attrs.get('avatar')
@@ -48,11 +40,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         """Проверяет, подписан ли текущий пользователь на данного автора."""
-        request = self.context.get('request')
         return (
-            request and request.user.is_authenticated
+            self.context.get('request')
+            and self.context['request'].user.is_authenticated
             and Subscription.objects.filter(
-                author=obj, user=request.user).exists()
+                author=obj, user=self.context['request'].user
+            ).exists()
         )
 
 
@@ -124,6 +117,8 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
 
 class RecipeShortSerializer(serializers.ModelSerializer):
     """Сериализатор для информации о рецепте для SubscriptionSerializer."""
+    image = serializers.ImageField()
+
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
@@ -187,17 +182,23 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         """Добавлен ли рецепт в избранное."""
-        user = self.context.get('request').user
-        if user.is_authenticated:
-            return obj.favorite.filter(user=user).exists()
-        return False
+        return (
+            self.context.get('request')
+            and self.context['request'].user.is_authenticated
+            and obj.favorite.filter(
+                user=self.context['request'].user
+            ).exists()
+        )
 
     def get_is_in_shopping_cart(self, obj):
         """Добавлен ли рецепт в список покупок."""
-        user = self.context.get('request').user
-        if user.is_authenticated:
-            return obj.shoppingcart.filter(user=user).exists()
-        return False
+        return (
+            self.context.get('request')
+            and self.context['request'].user.is_authenticated
+            and obj.shoppingcart.filter(
+                user=self.context['request'].user
+            ).exists()
+        )
 
 
 class IngredientCreateSerializer(serializers.ModelSerializer):
@@ -233,14 +234,21 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             'cooking_time',
         )
 
+    def validate_image(self, value):
+        """Проверка изображения."""
+        instance = self.instance
+
+        if not value:
+            if instance:
+                return instance.image
+            raise serializers.ValidationError('Добавьте изображение рецепта!')
+
+        return value
+
     def validate(self, attrs):
         """Валидация полей рецепта."""
         ingredients = attrs.get('ingredients', [])
         tags = attrs.get('tags', [])
-        if self.instance is None and 'image' not in attrs:
-            raise serializers.ValidationError(
-                'Добавьте изображение рецепта!'
-            )
 
         if not tags:
             raise serializers.ValidationError(
@@ -315,7 +323,6 @@ class BaseRecipeRelationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'error': 'Рецепт уже в списке.'}
             )
-        data['recipe'] = recipe
         return data
 
     def to_representation(self, instance):

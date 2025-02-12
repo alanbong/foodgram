@@ -47,11 +47,12 @@ Foodgram — это продуктовый помощник, который по
     │── .env
     ```
 
-4. Заполнить .env следующими данными(для примера можно воспользоваться .env.example в корне проекта):
+4. Заполнить .env следующими данными (для примера можно воспользоваться .env.example в корне проекта):
     ```
     SECRET_KEY=<КЛЮЧ>
     DEBUG=True(если на процессе отладки)
     ALLOWED_HOSTS=123.123.123.123,yoursite.com,localhost,127.0.0.1
+    CSRF_TRUSTED_ORIGINS = https://yoursite.com,http://yoursite.com
 
     POSTGRES_DB=foodgram
     DATABASE_USER=ия пользователя бд
@@ -63,14 +64,16 @@ Foodgram — это продуктовый помощник, который по
 
 5. Перейти в папку infra и выполнить команды::
     ```
-    docker-compose up -d
-    docker-compose exec backend python manage.py makemigrations
-    docker-compose exec backend python manage.py migrate
-    docker-compose exec backend python manage.py collectstatic --no-input
+    docker compose up -d
+    docker compose exec backend python manage.py makemigrations
+    docker compose exec backend python manage.py migrate
+    docker compose exec backend python manage.py collectstatic --no-input
+    # (Опционально) Если нужно заполнить БД ингредиентами и тегами:
+    docker compose exec backend python manage.py import_csv
     ```
 6. Создайте суперпользователя выполнив команду и следуя инструкции в терминале:
     ```
-    docker-compose exec backend python manage.py createsuperuser
+    docker compose exec backend python manage.py createsuperuser
     ```
 7. Запустите проект:
     ```

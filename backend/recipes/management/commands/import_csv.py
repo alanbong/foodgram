@@ -32,7 +32,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Загружает все CSV файлы"""
-        data_dir = os.path.join(BASE_DIR.parent, 'data')
+        data_dir = os.path.join(BASE_DIR, 'data')
         for filename, process_function in action.items():
             file_path = os.path.join(data_dir, filename)
 

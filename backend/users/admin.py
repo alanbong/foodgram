@@ -11,7 +11,7 @@ admin.site.unregister(Group)
 class UserModelAdmin(UserAdmin):
     list_display = ('id', 'username', 'first_name',
                     'last_name', 'email',
-                    'is_admin_display', 'subscribers_count')
+                    'is_superuser', 'subscribers_count')
     list_filter = ('username', 'email')
     search_fields = ('username', 'email', 'first_name', 'last_name')
     ordering = ('-is_superuser', '-is_staff', 'username')
@@ -19,11 +19,6 @@ class UserModelAdmin(UserAdmin):
     @admin.display(description='Подписчиков у автора')
     def subscribers_count(self, obj):
         return obj.subscribers.count()
-
-    @admin.display(description="Админ")
-    def is_admin_display(self, obj):
-        return obj.is_admin
-
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):

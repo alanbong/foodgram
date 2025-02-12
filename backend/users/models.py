@@ -4,12 +4,16 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 
 from .constants import STR_REPR_MAX_LENGTH, USER_PERSONAL_FIELDS_MAX_LENGTH
+from .validators import validate_lowercase_email
 
 
 class UserModel(AbstractUser):
     """Кастомная модель пользователя с поддержкой ролей."""
     email = models.EmailField(
         unique=True,
+        validators=[
+            validate_lowercase_email
+        ],
         verbose_name='Адрес электронной почты'
     )
     username = models.CharField(

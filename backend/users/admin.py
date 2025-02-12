@@ -21,6 +21,7 @@ class UserModelAdmin(UserAdmin):
     def subscribers_count(self, obj):
         return obj.subscribers.count()
 
+
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ('user', 'author')

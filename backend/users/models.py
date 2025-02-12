@@ -42,10 +42,6 @@ class UserModel(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
-    @property
-    def is_admin(self):
-        return self.is_superuser
-
     class Meta:
         ordering = ('username',)
         verbose_name = 'Пользователь'
